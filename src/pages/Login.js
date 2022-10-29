@@ -5,14 +5,17 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { googleProvider, githubProvider } from '../firebase';
 
 const auth = getAuth();
 
 const Login = ({ setUser }) => {
+  const [message, setMessage] = useState();
   const emailRef = useRef();
   const passwordRef = useRef();
+
   const handleCreateAccount = () => {
     createUserWithEmailAndPassword(
       auth,
@@ -21,16 +24,16 @@ const Login = ({ setUser }) => {
     )
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
-
         setUser(user);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setMessage(errorMessage);
         console.error(errorCode, errorMessage);
       });
   };
+
   const handleLogin = () => {
     signInWithEmailAndPassword(
       auth,
@@ -39,15 +42,16 @@ const Login = ({ setUser }) => {
     )
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
         setUser(user);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setMessage(errorMessage);
         console.error(errorCode, errorMessage);
       });
   };
+
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     heading: 'Log In',
@@ -89,6 +93,7 @@ const Login = ({ setUser }) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         const email = error.customData.email;
+        setMessage(errorMessage);
         console.error(errorCode, errorMessage, email);
       });
   };
@@ -97,14 +102,27 @@ const Login = ({ setUser }) => {
     signInWithPopup(auth, githubProvider)
       .then((result) => {
         const user = result.user;
-        console.log(user);
         setUser(user);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         const email = error.customData.email;
+        setMessage(errorMessage);
         console.error(errorCode, errorMessage, email);
+      });
+  };
+
+  const handlePasswordReset = () => {
+    sendPasswordResetEmail(auth, emailRef.current.value)
+      .then(() => {
+        setMessage('Please check your mail.');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setMessage(errorMessage);
+        console.error(errorCode, errorMessage);
       });
   };
 
@@ -132,8 +150,11 @@ const Login = ({ setUser }) => {
         </InputWrapper>
         <OtherOptions>
           <Option onClick={handleOptionChange}>{data.option}</Option>
-          {data.forgotPassword && <Option>Forgot Password</Option>}
+          {data.forgotPassword && (
+            <Option onClick={handlePasswordReset}>Forgot Password</Option>
+          )}
         </OtherOptions>
+        {!!message && <Message>{message}</Message>}
         <StyledButton buttonType='login' onClick={data.buttonAction}>
           {data.heading}
         </StyledButton>
@@ -262,6 +283,8 @@ const Option = styled.div`
     translate: 0 2px;
   }
 `;
+
+const Message = styled.div``;
 
 const StyledButton = styled.button`
   width: 75%;

@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Article = ({ article, index }) => {
-  console.log(index);
   return (
     <Container background={article.urlToImage}>
       <SourceName>
