@@ -38,13 +38,21 @@ export default Article;
 const Container = styled.div`
   background: url(${({ background }) => background});
   padding: 20px;
-  max-width: 35vw;
   position: relative;
+  max-width: 100vw;
+
   z-index: 1;
   display: grid;
-  grid-template-columns: 2fr 5fr;
   gap: 10px;
   border-radius: 10px;
+  @media screen and (min-width: 600px) {
+    max-width: 70vw;
+    grid-template-columns: 1fr 5fr;
+  }
+  @media screen and (min-width: 1200px) {
+    max-width: 35vw;
+    grid-template-columns: 2fr 5fr;
+  }
 `;
 
 const SourceName = styled.p`

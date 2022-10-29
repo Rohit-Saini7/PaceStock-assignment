@@ -188,11 +188,20 @@ const LoginWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: white;
-  width: 25vw;
+  width: 100vw;
   border-radius: 30px;
   gap: 15px;
   color: #7053bc;
   padding-bottom: 30px;
+  @media screen and (min-width: 650px) {
+    width: 60vw;
+  }
+  @media screen and (min-width: 1000px) {
+    width: 40vw;
+  }
+  @media screen and (min-width: 1400px) {
+    width: 25vw;
+  }
 `;
 
 const RocketImage = styled.img`
