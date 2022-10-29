@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import Article from '../components/Article';
 import { data } from '../data';
 
 const Home = () => {
-  const [news, setNews] = useState({});
+  const [news, setNews] = useState(data);
   useEffect(() => {
     //GET request
     // api URL = https://newsapi.org/v2/everything?q=react&sortBy=publishedAt&apiKey=722d2d70398c4fd286d571529cfeda5f
@@ -11,12 +12,20 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      {news?.articles?.map((article, index) => (
+    <Container>
+      {news.articles.map((article, index) => (
         <Article article={article} key={article.title} index={index} />
       ))}
-    </div>
+    </Container>
   );
 };
 
 export default Home;
+
+const Container = styled.div`
+  margin: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  text-align: center;
+`;
