@@ -3,18 +3,28 @@ import styled from 'styled-components';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const data = {
+  const [data, setData] = useState({
     heading: 'Log In',
     option: 'Create Account',
     forgotPassword: true,
-  };
+  });
 
   const handleOptionChange = () => {
     switch (data.heading) {
       case 'Log In':
-        console.log('aaa');
+        setData({
+          heading: 'Create Account',
+          option: 'Log In',
+          forgotPassword: false,
+        });
         break;
-
+      case 'Create Account':
+        setData({
+          heading: 'Log In',
+          option: 'Create Account',
+          forgotPassword: true,
+        });
+        break;
       default:
         break;
     }
@@ -42,7 +52,7 @@ const Login = () => {
         </InputWrapper>
         <OtherOptions>
           <Option onClick={handleOptionChange}>{data.option}</Option>
-          <Option>{data.forgotPassword && 'Forgot Password'}</Option>
+          {data.forgotPassword && <Option>Forgot Password</Option>}
         </OtherOptions>
         <StyledButton buttonType='login'>{data.heading}</StyledButton>
         <StyledButton buttonType='google'>
