@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-function Navbar() {
+function Navbar({ setUser }) {
   return (
     <Container>
       <NavbarWrap className='navbarWrap'>
         <Toolbar>
           <LogoBox>Assignment</LogoBox>
-          <LogOutButton>Log Out</LogOutButton>
+          <LogOutButton onClick={() => setUser(null)}>Log Out</LogOutButton>
         </Toolbar>
       </NavbarWrap>
     </Container>

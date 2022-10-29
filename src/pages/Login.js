@@ -1,11 +1,58 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
+import {
+  getAuth,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import { googleProvider, githubProvider } from '../firebase';
 
-const Login = () => {
+const auth = getAuth();
+
+const Login = ({ setUser }) => {
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const handleCreateAccount = () => {
+    createUserWithEmailAndPassword(
+      auth,
+      emailRef.current.value,
+      passwordRef.current.value
+    )
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+
+        setUser(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+      });
+  };
+  const handleLogin = () => {
+    signInWithEmailAndPassword(
+      auth,
+      emailRef.current.value,
+      passwordRef.current.value
+    )
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        setUser(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+      });
+  };
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     heading: 'Log In',
     option: 'Create Account',
+    buttonAction: handleLogin,
     forgotPassword: true,
   });
 
@@ -15,6 +62,7 @@ const Login = () => {
         setData({
           heading: 'Create Account',
           option: 'Log In',
+          buttonAction: handleCreateAccount,
           forgotPassword: false,
         });
         break;
@@ -22,6 +70,7 @@ const Login = () => {
         setData({
           heading: 'Log In',
           option: 'Create Account',
+          buttonAction: handleLogin,
           forgotPassword: true,
         });
         break;
@@ -29,19 +78,50 @@ const Login = () => {
         break;
     }
   };
+
+  const handleGoogleClick = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        console.error(errorCode, errorMessage, email);
+      });
+  };
+
+  const handleGitHubClick = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        setUser(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        console.error(errorCode, errorMessage, email);
+      });
+  };
+
   return (
     <Container>
       <LoginWrapper>
         <RocketImage src='assets/rocket.svg' alt='' />
         <MainHeading>{data.heading}</MainHeading>
         <InputWrapper>
-          <InputTextbox type='email' required='required' />
+          <InputTextbox type='email' required='required' ref={emailRef} />
           <InputLabel>Email</InputLabel>
         </InputWrapper>
         <InputWrapper>
           <InputTextbox
             type={`${showPassword ? 'text' : 'password'}`}
             required='required'
+            ref={passwordRef}
           />
           <PasswordIcon
             src={`assets/${showPassword ? 'eye-open' : 'eye-closed'}.svg`}
@@ -54,11 +134,20 @@ const Login = () => {
           <Option onClick={handleOptionChange}>{data.option}</Option>
           {data.forgotPassword && <Option>Forgot Password</Option>}
         </OtherOptions>
-        <StyledButton buttonType='login'>{data.heading}</StyledButton>
-        <StyledButton buttonType='google'>
+        <StyledButton buttonType='login' onClick={data.buttonAction}>
+          {data.heading}
+        </StyledButton>
+        <StyledButton buttonType='google' onClick={handleGoogleClick}>
           <LabelWrapper>
             <StyledIcon src='assets/google.svg' alt='' />
             Sign In With Google
+          </LabelWrapper>
+          <StyledIcon src='assets/arrow.svg' alt='' />
+        </StyledButton>
+        <StyledButton buttonType='github' onClick={handleGitHubClick}>
+          <LabelWrapper>
+            <StyledIcon src='assets/github.svg' alt='' />
+            Sign In With GitHub
           </LabelWrapper>
           <StyledIcon src='assets/arrow.svg' alt='' />
         </StyledButton>

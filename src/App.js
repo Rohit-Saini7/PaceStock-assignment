@@ -1,11 +1,13 @@
+import React, { useState } from 'react';
 import Home from './pages/Home';
-// import Login from './pages/Login';
+import Login from './pages/Login';
 
 function App() {
+  const [user, setUser] = useState(null);
   return (
-    <div>
-      <Home />
-    </div>
+    <React.Fragment>
+      {!user ? <Login setUser={setUser} /> : <Home setUser={setUser} />}
+    </React.Fragment>
   );
 }
 

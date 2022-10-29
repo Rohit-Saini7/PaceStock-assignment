@@ -4,7 +4,7 @@ import Article from '../components/Article';
 import Navbar from '../components/NavBar';
 import { data } from '../data';
 
-const Home = () => {
+const Home = ({ setUser }) => {
   const [news, setNews] = useState(data);
   useEffect(() => {
     //GET request
@@ -14,7 +14,7 @@ const Home = () => {
 
   return (
     <Container>
-      <Navbar />
+      <Navbar setUser={setUser} />
       {news.articles.map((article, index) => (
         <Article article={article} key={article.title} index={index} />
       ))}
